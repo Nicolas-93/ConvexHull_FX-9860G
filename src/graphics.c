@@ -22,10 +22,10 @@ void GFX_plot_points(ListPoint* points, color_t color) {
 }
 
 color_t GFX_map_color(int n) {
-    static color_t colors[4] = {
-        C_BLACK, C_WHITE, C_DARK, C_LIGHT
+    static color_t colors[] = {
+        C_BLACK, C_LIGHT, C_DARK,
     };
-    n %= 4;
+    n %= 3;
 
     return colors[n];
 }
@@ -50,7 +50,7 @@ void GFX_draw_filled_polygon(ConvexHull* convex) {
 */
 
 /**
- * @brief Dessine un polygone
+ * @brief Dessine un polygone par des lignes (non rempli)
  * 
  * @param convex Adresse de l'enveloppe convexe
  */
@@ -102,6 +102,24 @@ void GFX_draw_filled_polygons(ListConvexHull* convexs) {
 }
 */
 
+
+/**
+ * @brief Dessine une liste de polygônes convexes par
+ * des lignes (non remplis).
+ * 
+ * @param convexs Adresse de la liste ConvexHulls
+ */
+void GFX_draw_lines_polygons(ListConvexHull* convexs) {
+    ConvexHullEntry* convex_entry;
+
+    CIRCLEQ_FOREACH(convex_entry, convexs, entries) {
+        GFX_draw_lines_polygon(
+            convex_entry->convex
+        );
+    }
+}
+
+
 void GFX_animate_convex(ConvexHull* convex, ListPoint* reste) {
     dclear(C_WHITE);
     
@@ -113,16 +131,17 @@ void GFX_animate_convex(ConvexHull* convex, ListPoint* reste) {
     dupdate();
 }
 
-/*
+
 void GFX_animate_ListConvexHull(ListConvexHull* convexs) {
     dclear(C_WHITE);
 
-    GFX_draw_filled_polygons(convexs);
+    GFX_draw_lines_polygons(convexs);
 
+    // Un sleep ici pour le moteur de gris ?
     // MLV_wait_milliseconds(1);
     dupdate();
 }
-*/
+
 
 /*
 void GFX_draw_triangle(Point a, Point b, Point c, MLV_Color color) {

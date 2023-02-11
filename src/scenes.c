@@ -39,14 +39,14 @@ void SCN_polygon_simple(Parameters params) {
     return;
 }
 
-/*
+
 void SCN_polygon_inception(Parameters params) {
     ListConvexHull convexs;
     ListPoint points;
     CIRCLEQ_INIT(&convexs);
     CIRCLEQ_INIT(&points);
-    MLV_Ev ev;
-    Point* point;
+    key_event_t ev;
+    // Point* point;
 
     if (params.gen.enabled) {
         GEN_choose_generation(params, &points);
@@ -58,17 +58,11 @@ void SCN_polygon_inception(Parameters params) {
 
     while (1) {
         GFX_animate_ListConvexHull(&convexs);
-        ev = SCN_wait_ev();
-        if (ev.type == MLV_KEY) {
-            if (ev.key_btn == MLV_KEYBOARD_ESCAPE) {
-                CVH_free_vertex_list(&points, true);
-                CVH_free_ListConvexHull(&convexs);
-                break;
-            }
-        }
-        else if (IS_CLICK(ev)) {
-            point = CVH_add_user_point(&points, MOUSE_EV_TO_POINT(ev));
-            CVH_add_inception_recursif(&convexs, convexs.cqh_first, point);
+        ev = getkey();
+        if (ev.key == KEY_EXE) {
+            break;
         }
     }
-}*/
+    CVH_free_vertex_list(&points, true);
+    CVH_free_ListConvexHull(&convexs);
+}

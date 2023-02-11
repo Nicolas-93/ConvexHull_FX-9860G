@@ -195,13 +195,14 @@ void CVH_points_to_ConvexHull(
 
 /**
  * @brief Crée une liste de polygône convexes imbriqués, à partir
- * de la liste de points fournies 
+ * de la liste de points fournie.
  * 
  * @param points Adresse de la liste de points.
  * @param convexs Adresse de l'entête de la liste de ConvexHull
  * de destination
  * @param callback Fonction à appeler après chaque ajout de point,
- * prenant en paramètre l'objet ListConvexHull et l'adresse de
+ * prenant en paramètre l'objet ListConvexHull et l'adresse de la
+ * liste ConvexHull
  */
 void CVH_points_to_ListConvexHull(
     ListPoint* points,
@@ -365,6 +366,12 @@ ConvexHullEntry* CVH_new_convexhullentry(Point* p) {
     new_vtx = CVH_new_vertex_pointer(p);
     
     if (!new_entry || !new_convex || !new_vtx) {
+        if (new_entry)
+            free(new_entry);
+        if (new_convex)
+            CVH_free_convexhull(new_convex);
+        if (new_vtx)
+            free(new_vtx);
         return NULL;
     }
 
@@ -372,9 +379,9 @@ ConvexHullEntry* CVH_new_convexhullentry(Point* p) {
     new_convex->current_len = 1;
     new_convex->color = GFX_map_color(i);
     new_entry->convex = new_convex;
-    
+
     i++;
-    
+
     return new_entry;
 }
 

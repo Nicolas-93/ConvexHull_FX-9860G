@@ -1,29 +1,31 @@
 #include <gint/display.h>
+#include <gint/gray.h>
 #include <gint/keyboard.h>
 #include "scenes.h"
 #include "args.h"
-#define MARGIN 10
 
 static Parameters params = {
 	.window.width = DWIDTH, .window.height = DHEIGHT,
 	.gen = {
-		.shape = CERCLE,
-		.margin = MARGIN,
+		.shape = RECTANGLE,
+		.margin = 10,
 		.enabled = true,
-		.nb_points = 300,
-		.rayon = 32,
+		.nb_points = 250,
 		.concentration = 1,
 		.progressif = true,
 		.animation = true,
 	},
-	.inception = false
+	.inception = true,
 };
 
 int main(void) {
 	dclear(C_WHITE);
-	SCN_polygon_simple(params);
-	// dtext(1, 1, C_BLACK, "Sample fxSDK add-in.");
+	dgray(DGRAY_ON);
+
+	SCN_polygon_inception(params);
+
 	dupdate();
+	dgray(DGRAY_OFF);
 
 	return 1;
 }
