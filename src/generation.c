@@ -5,6 +5,7 @@
 #include <time.h>
 #include "generation.h"
 #include "convexhull.h"
+#include "utils.h"
 
 #define PI 3.14159265358979323846
 
@@ -86,12 +87,12 @@ inline int GEN_compare_point_distance(const void* a, const void* b) {
  * @return Point Point généré
  */
 Point GEN_formule_cercle(
-    int largeur, int hauteur,
-    int i, int nb_points, int r_max, double concentration
+    int offset_x, int offset_y,
+    int i, int nb_points, int w_rmax, int h_rmax, double concentration
 ) {
-    int offset_x = largeur / 2, offset_y = hauteur / 2;
-    double rnd, rayon, angle;
     Point p;
+    double rnd, rayon, angle;
+    int r_max = MIN(w_rmax, h_rmax);
     rnd = rand_double(1);
     rayon = sqrt(pow(rnd, concentration));
     angle = 2 * PI * rand_double(1);
@@ -107,14 +108,13 @@ Point GEN_formule_cercle(
  * 
  * @return Point 
  */
-Point GEN_formule_carre_uniforme(
-    int largeur, int hauteur,
-    int i, int nb_points, int r_max, double concentration
+Point GEN_formule_rectangle_uniforme(
+    int offset_x, int offset_y,
+    int i, int nb_points, int w_rmax, int h_rmax, double concentration
 ) {
-    int offset_x = largeur / 2, offset_y = hauteur / 2;
     Point p;
-    p.x = uniform(-r_max, r_max) + offset_x;
-    p.y = uniform(-r_max, r_max) + offset_y;
+    p.x = uniform(-w_rmax, w_rmax) + offset_x;
+    p.y = uniform(-h_rmax, h_rmax) + offset_y;
 
     return p;
 }
@@ -126,15 +126,13 @@ Point GEN_formule_carre_uniforme(
  * @return Point 
  */
 Point GEN_formule_carre_croissant(
-    int largeur, int hauteur,
-    int i, int nb_points, int r_max, double concentration
+    int offset_x, int offset_y,
+    int i, int nb_points, int w_rmax, int h_rmax, double concentration
 ) {
-    double dist_inc = ((double) r_max / (double) nb_points) * i;
-    double a_x = -dist_inc, a_y = -dist_inc, b_x = dist_inc, b_y = dist_inc;
-    int offset_x = largeur / 2;
-    int offset_y = hauteur / 2;
-
     Point p;
+    double dist_inc = ((double) h_rmax / (double) nb_points) * i;
+    double a_x = -dist_inc, a_y = -dist_inc, b_x = dist_inc, b_y = dist_inc;
+
     p.x = uniform(a_x, b_x) + offset_x;
     p.y = uniform(a_y, b_y) + offset_y;
 
@@ -159,12 +157,11 @@ Point GEN_formule_carre_croissant(
  */
 int GEN_points_formule(
     ListPoint* points,
-    int largeur, int hauteur,
-    int nb_points, int r_max, double concentration, bool tri,
-    Point (*formule) (int, int, int, int, int, double)
+    int offset_x, int offset_y,
+    int nb_points, int w_rmax, int h_rmax, double concentration, bool tri,
+    Point (*formule) (int, int, int, int, int, int, double)
 ) {
     PointDistance* tab_points = NULL;
-    int offset_x = largeur / 2, offset_y = hauteur / 2;
     CIRCLEQ_INIT(points);
     if (tri) {
         tab_points = malloc(nb_points * sizeof(PointDistance));
@@ -174,9 +171,10 @@ int GEN_points_formule(
 
     for (int i = 0; i < nb_points; ++i) {
         Point p = formule(
-            largeur, hauteur,
+            offset_x, offset_y,
             i, nb_points,
-            r_max, concentration
+            w_rmax, h_rmax,
+            concentration
         );
 
         if (tri) {
@@ -223,7 +221,7 @@ void GEN_sort_tab_PointDistance_to_ListPoint(PointDistance* tab_points, int size
 void GEN_choose_generation(Parameters params, ListPoint* points) {
     CIRCLEQ_INIT(points);
 
-    Point (*formule) (int, int, int, int, int, double);
+    Point (*formule) (int, int, int, int, int, int, double);
     if (params.gen.shape == CERCLE) {
         formule = GEN_formule_cercle;
     }
@@ -232,12 +230,13 @@ void GEN_choose_generation(Parameters params, ListPoint* points) {
     else if (params.gen.concentration != 1) {
         formule = GEN_formule_carre_croissant;
     } else {
-        formule = GEN_formule_carre_uniforme;
+        formule = GEN_formule_rectangle_uniforme;
     }
     srand(time(NULL));
     GEN_points_formule(points,
-        params.window.width, params.window.height,
-        params.gen.nb_points, params.gen.rayon,
+        params.window.width / 2, params.window.height / 2,
+        params.gen.nb_points,
+        (params.window.width - params.gen.margin) / 2, (params.window.height - params.gen.margin) / 2,
         params.gen.concentration, params.gen.progressif,
         formule
     );

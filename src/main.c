@@ -2,15 +2,17 @@
 #include <gint/keyboard.h>
 #include "scenes.h"
 #include "args.h"
+#define MARGIN 10
 
 static Parameters params = {
 	.window.width = DWIDTH, .window.height = DHEIGHT,
 	.gen = {
-		.shape = CARRE,
+		.shape = CERCLE,
+		.margin = MARGIN,
 		.enabled = true,
-		.nb_points = 200,
+		.nb_points = 300,
 		.rayon = 32,
-		.concentration = 3,
+		.concentration = 1,
 		.progressif = true,
 		.animation = true,
 	},

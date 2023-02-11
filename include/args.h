@@ -1,10 +1,11 @@
 #ifndef H_ARGS
 #define H_ARGS
 
-enum Shape {CARRE, CERCLE};
+enum Shape {RECTANGLE, CERCLE};
 typedef struct {
     struct {
         enum Shape shape;
+        int margin;
         int enabled;
         int nb_points;
         int rayon;

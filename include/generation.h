@@ -18,24 +18,24 @@ int random_bool();
 int random_direction();
 
 void GEN_choose_generation(Parameters params, ListPoint* points);
-Point GEN_formule_carre_uniforme(
-    int largeur, int hauteur,
-    int i, int nb_points, int r_max, double concentration
+Point GEN_formule_rectangle_uniforme(
+    int offset_x, int offset_y,
+    int i, int nb_points, int w_rmax, int h_rmax, double concentration
 );
 Point GEN_formule_carre_croissant(
-    int largeur, int hauteur,
-    int i, int nb_points, int r_max, double concentration
+    int offset_x, int offset_y,
+    int i, int nb_points, int w_rmax, int h_rmax, double concentration
 );
 Point GEN_formule_cercle(
-    int largeur, int hauteur,
-    int i, int nb_points, int r_max, double concentration
+    int offset_x, int offset_y,
+    int i, int nb_points, int w_rmax, int h_rmax, double concentration
 );
 
 int GEN_points_formule(
     ListPoint* points,
-    int largeur, int hauteur,
-    int nb_points, int r_max, double concentration, bool tri,
-    Point (*formule) (int, int, int, int, int, double)
+    int offset_x, int offset_y,
+    int nb_points, int w_rmax, int h_rmax, double concentration, bool tri,
+    Point (*formule) (int, int, int, int, int, int, double)
 );
 double GEN_distance(double ax, double ay, double bx, double by);
 int GEN_compare_point_distance(const void* a, const void* b);
